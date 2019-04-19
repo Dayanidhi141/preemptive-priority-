@@ -1,0 +1,1148 @@
+
+<!-- saved from url=(0072)http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node3.html -->
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="Microsoft Word 9">
+<meta name="Originator" content="Microsoft Word 9">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title> Solutions to the Critical Section Problem</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>enduser</o:Author>
+  <o:LastAuthor>enduser</o:LastAuthor>
+  <o:Revision>3</o:Revision>
+  <o:TotalTime>180</o:TotalTime>
+  <o:Created>2004-04-16T20:56:00Z</o:Created>
+  <o:LastSaved>2004-04-16T23:56:00Z</o:LastSaved>
+  <o:Pages>7</o:Pages>
+  <o:Words>1324</o:Words>
+  <o:Characters>7549</o:Characters>
+  <o:Company>University of Regina</o:Company>
+  <o:Lines>62</o:Lines>
+  <o:Paragraphs>15</o:Paragraphs>
+  <o:CharactersWithSpaces>9270</o:CharactersWithSpaces>
+  <o:Version>9.4402</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:13.5pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p
+	{font-size:13.5pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+tt
+	{mso-ascii-font-family:"Courier New";
+	mso-fareast-font-family:"Courier New";
+	mso-hansi-font-family:"Courier New";
+	mso-bidi-font-family:"Courier New";}
+@page Section1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	mso-header-margin:35.4pt;
+	mso-footer-margin:35.4pt;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:129059710;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-825197538 414379698 -1290488262 1201300760 -478751574 -82518062 820777608 1379445506 -203243260 1692668846;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l1
+	{mso-list-id:364790746;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1837746340 747402022 -574337324 1922852934 -1652809742 140309968 -332599876 192286292 -420167278 -1988615398;}
+@list l1:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2
+	{mso-list-id:533273052;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1885304220 -1489455320 -309154952 -1624981284 1209457946 -752965900 1525997338 1690501054 -681412580 1613642624;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l3
+	{mso-list-id:851071162;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1974248050 1528313584 -424638172 -1847458444 2145710560 -1295741466 775602880 -323720652 -1362876376 -136252988;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l4
+	{mso-list-id:932125952;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1560912738 -2109181274 -854019204 769835566 -267764048 1808285336 -1087835314 -1727655860 -1499322870 -1599166168;}
+@list l4:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l5
+	{mso-list-id:1033069992;
+	mso-list-type:hybrid;
+	mso-list-template-ids:893786882 -1702749126 590362980 512361456 -1998935878 -1697754594 -1482667480 1109175614 -1327486342 -764121908;}
+@list l5:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l6
+	{mso-list-id:1258753351;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-59761144 -2034854478 1155200422 -1420393990 -1034497122 -195532920 1458854796 1557981916 -2089362718 -1382233730;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:1341084425;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1358031100 1079027796 424072598 2093522818 -328278208 443435166 1677228286 795801004 1816546788 2105316196;}
+@list l7:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l7:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l8
+	{mso-list-id:1402412593;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-601559320 65457816 725354044 1703683654 -788105350 -532106572 361165370 1363422414 1174549596 851087958;}
+@list l8:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l8:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l9
+	{mso-list-id:1988826458;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1362097716 1133000552 171225904 -1350542740 1664127408 2120496812 -959793834 301366706 -1576112162 964710894;}
+@list l9:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l9:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l10
+	{mso-list-id:2086029630;
+	mso-list-type:hybrid;
+	mso-list-template-ids:146808906 72492738 1563603580 -1063382634 255100652 -1270597070 -223970068 69395578 -1599930808 -768596534;}
+@list l10:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Symbol;}
+@list l10:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:"Courier New";
+	mso-bidi-font-family:"Times New Roman";}
+@list l10:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:108.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	mso-ansi-font-size:13.5pt;
+	font-family:Wingdings;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1031"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body bgcolor="white" background="./Solutions to the Critical Section Problem_files/yellow_rock.gif" lang="EN-CA" link="blue" vlink="blue" style="tab-interval:36.0pt">
+
+<div class="Section1">
+
+<p class="MsoNormal"><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node2.html"></a><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_s1026" type="#_x0000_t75" alt=""
+ href="node2.html" style='position:absolute;margin-left:0;margin-top:0;width:30pt;
+ height:30pt;z-index:1;mso-wrap-distance-left:0;mso-wrap-distance-top:0;
+ mso-wrap-distance-right:0;mso-wrap-distance-bottom:0;
+ mso-position-horizontal:left;mso-position-horizontal-relative:text;
+ mso-position-vertical-relative:line' o:allowoverlap="f" o:button="t">
+ <v:imagedata src="http://www.cs.uregina.ca/~hamilton/courses/330/notes/gifs/back_arrow.gif"/>
+ <w:wrap type="square"/>
+</v:shape><![endif]--><!--[if !vml]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node2.html"><img border="0" width="40" height="40" src="./Solutions to the Critical Section Problem_files/back_arrow.gif" align="left" v:shapes="_x0000_s1026"></a><!--[endif]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node2.html"></a><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node4.html"></a><!--[if gte vml 1]><v:shape id="_x0000_s1027" type="#_x0000_t75"
+ alt="" href="node4.html" style='position:absolute;margin-left:-10pt;
+ margin-top:0;width:30pt;height:30pt;z-index:2;mso-wrap-distance-left:0;
+ mso-wrap-distance-top:0;mso-wrap-distance-right:0;mso-wrap-distance-bottom:0;
+ mso-position-horizontal:right;mso-position-horizontal-relative:text;
+ mso-position-vertical-relative:line' o:allowoverlap="f" o:button="t">
+ <v:imagedata src="http://www.cs.uregina.ca/~hamilton/courses/330/notes/gifs/next.gif"/>
+ <w:wrap type="square"/>
+</v:shape><![endif]--><!--[if !vml]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node4.html"><img border="0" width="40" height="40" src="./Solutions to the Critical Section Problem_files/next.gif" align="right" v:shapes="_x0000_s1027"></a><!--[endif]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node4.html"></a></p>
+
+<p class="MsoNormal" align="center" style="text-align:center"><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/index.html"><span style="text-decoration:none;text-underline:none"><img border="0" width="59" height="42" id="_x0000_i1025" src="./Solutions to the Critical Section Problem_files/home.gif"></span>Return
+to Contents </a></p>
+
+<p class="MsoNormal"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+
+
+<div class="MsoNormal" align="center" style="text-align:center">
+
+<hr size="2" width="100%" align="center">
+
+</div>
+
+
+<h1><a name="SECTION00030000000000000000">Solutions to the Critical Section
+Problem</a></h1>
+
+<p><b><i>Assumption</i></b> </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l6 level1 lfo1;tab-stops:list 36.0pt">assume that a variable
+     (memory location) can only have one value; never ``between values'' </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l6 level1 lfo1;tab-stops:list 36.0pt">if processes A and B write
+     a value to the same memory location at the ``same time,'' either the value
+     from A or the value from B will be written rather than some scrambling of
+     bits </li>
+</ul>
+
+<p><b><i>Peterson's Algorithm</i></b> </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l3 level1 lfo2;tab-stops:list 36.0pt">a simple algorithm that can
+     be run by two processes to ensure mutual exclusion for one resource (say
+     one variable or data structure) </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l3 level1 lfo2;tab-stops:list 36.0pt">does not require any
+     special hardware </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l3 level1 lfo2;tab-stops:list 36.0pt">it uses busy waiting (a
+     spinlock) </li>
+</ul>
+
+<p><b><i>Peterson's Algorithm</i></b> <br>
+Shared variables are created and initialized before either process starts. The
+shared variables flag[0] and flag[1] are initialized to FALSE because neither
+process is yet interested in the critical section. The shared variable turn is
+set to either 0 or 1 randomly (or it can always be set to say 0). <br>
+<br>
+<tt><b><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">var</span></b></tt><tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;"> flag: <b>array</b> [0..1] <b>of</b>
+boolean; </span></tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;;
+mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<tt>turn: 0..1;</tt></span> <br>
+<i>%flag[k] means that process[k] is interested in the critical section</i> <br>
+<tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">flag[0] := FALSE; </span></tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<tt>flag[1] := FALSE; </tt><br>
+<tt>turn := random(0..1) </tt></span><br>
+<br>
+After initialization, each process, which is called process <i>i</i> in the code (the other process is process <i>j</i>), runs
+the following code: <br>
+<br>
+<tt><b><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">repeat</span></b></tt><tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;"> </span></tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<tt>flag[i] := TRUE; </tt><br>
+<tt>turn := j; </tt><br>
+<tt><b>while</b> (flag[j] <b>and</b> turn=j) <b>do</b> no-op; </tt><br>
+<tt>CRITICAL SECTION </tt><br>
+<tt>flag[i] := FALSE; </tt><br>
+<tt>REMAINDER SECTION </tt><br>
+<tt><b>until</b> FALSE;</tt></span> </p>
+
+<p>Information common to both processes:<br>
+<tt>turn = 0</tt> <br>
+<tt>flag[0] = FALSE</tt> <br>
+<tt>flag[1] = FALSE</tt> <o:p></o:p></p>
+
+<table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;
+ border:none;mso-border-alt:solid windowtext .5pt;mso-padding-alt:0cm 5.4pt 0cm 5.4pt">
+ <tbody><tr>
+  <td width="590" colspan="2" valign="top" style="width:442.8pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>EXAMPLE 1</p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p>Process 0</p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>Process 1</p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">i = 0, j = 1</p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>i = 1, j = 0</p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">flag[0] := TRUE</p>
+  <p style="margin:0cm;margin-bottom:.0001pt">turn := 1<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[1] = TRUE and turn =
+  1)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">-<span style="mso-spacerun:
+  yes">&nbsp; </span>
+  <span>Condition is false because flag[1] = FALSE<o:p></o:p></span></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">
+  - <span>Since condition is false,</span> no waiting in while
+  loop<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">-<span style="mso-spacerun:
+  yes">&nbsp; </span>Enter the critical section<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">-<span style="mso-spacerun:
+  yes">&nbsp; </span>Process 0 happens to lose the processor</p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">flag[1] := TRUE<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">turn := 0<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[0] = TRUE and turn =
+  0)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Since condition is true, it keeps
+  busy waiting until it loses the processor</p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">- Process 0 resumes and continues
+  until it finishes in the critical section<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Leave critical section<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">flag[0] := FALSE<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Start executing the remainder
+  (anything else a process does besides using the critical section)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Process 0 happens to lose the
+  processor</p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[0] = TRUE and turn =
+  0)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- This condition fails because flag[0]
+  = FALSE<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- No more busy waiting<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Enter the critical section</p>
+  </td>
+ </tr>
+</tbody></table>
+
+<p><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+
+<table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;
+ border:none;mso-border-alt:solid windowtext .5pt;mso-padding-alt:0cm 5.4pt 0cm 5.4pt">
+ <tbody><tr>
+  <td width="590" colspan="2" valign="top" style="width:442.8pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>EXAMPLE 2<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p>Process 0<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>Process 1<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">i=0, j=1<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>i=1, j=0<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">flag[0] = TRUE<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">turn = 1<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Lose processor here<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">flag[1] := TRUE<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">turn := 0<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[0] = TRUE and turn =
+  0)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Condition is true so Process 1 busy
+  waits until it loses the processor<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[1] = TRUE and turn =
+  1)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">-<span style="mso-spacerun:
+  yes">&nbsp; </span>This condition is false because turn = 0</p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- No waiting in loop<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Enters critical section<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+ </tr>
+</tbody></table>
+
+<p><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+
+<table border="1" cellspacing="0" cellpadding="0" style="border-collapse:collapse;
+ border:none;mso-border-alt:solid windowtext .5pt;mso-padding-alt:0cm 5.4pt 0cm 5.4pt">
+ <tbody><tr>
+  <td width="590" colspan="2" valign="top" style="width:442.8pt;border:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>EXAMPLE 3<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p>Process 0<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>Process 1<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">i=0, j=1<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p>i=1, j=0<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">flag[0] = TRUE<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Lose processor here<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">flag[1] = TRUE<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">turn = 0<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[0] = TRUE and turn =
+  0)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Condition is true so, Process 1
+  busy waits until it loses the processor<o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">turn := 1<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[1] = TRUE and turn =
+  1)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- Condition is true so Process 0 busy
+  waits until it loses the processor<o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt"><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="295" valign="top" style="width:221.4pt;border:solid windowtext .5pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt">
+  <p><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+  </td>
+  <td width="295" valign="top" style="width:221.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:solid windowtext .5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt">
+  <p style="margin:0cm;margin-bottom:.0001pt">check (flag[0] = TRUE and turn =
+  0)<o:p></o:p></p>
+  <p style="margin:0cm;margin-bottom:.0001pt">- The condition is false so,
+  Process 1 enters the critical section</p>
+  </td>
+ </tr>
+</tbody></table>
+
+<p><!--[if !supportEmptyParas]-->&nbsp;<!--[endif]--><o:p></o:p></p>
+
+<p><b><i>Summary of Techniques for Critical Section Problem</i></b> <br>
+Software </p>
+
+<ol start="1" type="1">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l7 level1 lfo3;tab-stops:list 36.0pt"><b>Peterson's Algorithm</b>:
+     based on busy waiting </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l7 level1 lfo3;tab-stops:list 36.0pt"><b>Semaphores</b>: general
+     facility provided by operating system (e.g., OS/2) </li>
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l7 level2 lfo3;tab-stops:list 72.0pt">based on low-level
+      techniques such as busy waiting or hardware assistance </li>
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l7 level2 lfo3;tab-stops:list 72.0pt">described in more
+      detail below </li>
+ </ul>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l7 level1 lfo3;tab-stops:list 36.0pt"><b>Monitors</b>:
+     programming language technique </li>
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l7 level2 lfo3;tab-stops:list 72.0pt">see S&amp;G, pp.
+      190--197 for more details </li>
+ </ul>
+</ol>
+
+<p>Hardware </p>
+
+<ol start="1" type="1">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l9 level1 lfo4;tab-stops:list 36.0pt">Exclusive access to memory
+     location </li>
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l9 level2 lfo4;tab-stops:list 72.0pt">always assumed </li>
+ </ul>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l9 level1 lfo4;tab-stops:list 36.0pt">Interrupts that can be
+     turned off </li>
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l9 level2 lfo4;tab-stops:list 72.0pt">must have only one
+      processor for mutual exclusion </li>
+ </ul>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l9 level1 lfo4;tab-stops:list 36.0pt"><b>Test-and-Set</b>:
+     special machine-level instruction </li>
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l9 level2 lfo4;tab-stops:list 72.0pt">described in more
+      detail below </li>
+ </ul>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l9 level1 lfo4;tab-stops:list 36.0pt"><b>Swap</b>: atomically
+     swaps contents of two words </li>
+ <ul type="circle">
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l9 level2 lfo4;tab-stops:list 72.0pt">see S&amp;G, pp.
+      173--174 for more details </li>
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l9 level2 lfo4;tab-stops:list 72.0pt">for example, the Exchange instruction is available in the machine language used 
+      on Intel processors.</li>
+ </ul>
+</ul></ol>
+
+<p><b><i>Test-and-Set</i></b> </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">hardware assistance for
+     process synchronization </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">a special hardware
+     instruction that does two operations <b>atomically</b> </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">i.e., both operations are
+     executed or neither is</li>
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l8 level2 lfo5;tab-stops:list 72.0pt">sets the result to
+      current value </li>
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l8 level2 lfo5;tab-stops:list 72.0pt">changes current value to true
+      </li>
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l8 level2 lfo5;tab-stops:list 72.0pt">
+      when describing machine language (CPU) operations, the verb 'set' means 'set to true'
+      </li>
+ </ul>
+</ul>
+
+<p><b><i>Test-and-Set Solution to the Critical Section Problem</i></b> </p>
+
+<br>
+<tt><b>
+<span style="margin-left:36.0pt;font-size:13.5pt;font-family:&quot;Courier New&quot;">repeat<br></span>
+</b></tt>
+<p style="margin-left:72.0pt;font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;">
+<img border="0" width="303" height="30" id="_x0000_i1030" src="./Solutions to the Critical Section Problem_files/img9.gif" align="BOTTOM"><br>
+<tt>critical section </tt><br>
+<img border="0" width="140" height="29" id="_x0000_i1031" src="./Solutions to the Critical Section Problem_files/img10.gif" align="BOTTOM"><br>
+<tt>remainder section </tt><br>
+</p>
+<p style="margin-left:36.0pt;font-size:13.5pt;font-family:&quot;Courier New&quot;">
+<tt><b>until</b> false <o:p></o:p></tt></p>
+
+<p><span style="font-size:13.5pt;
+ font-family:&quot;Courier New&quot;;
+ mso-fareast-font-family:&quot;Courier New&quot;">
+Test-and-Set(target)</span><br>
+</p><p style="margin-left:36.0pt">
+<span style="font-size:13.5pt;
+ font-family:&quot;Courier New&quot;;
+ mso-fareast-font-family:&quot;Courier New&quot;">
+result := target <br>
+target := TRUE <br>
+return result </span></p>
+
+<p style="margin-left:36.0pt">
+Information common to both processes:<br>
+<tt>target = FALSE</tt> </p>
+
+<p><img border="0" width="737" height="256" id="_x0000_i1032" src="./Solutions to the Critical Section Problem_files/img11.gif" align="BOTTOM"></p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l4 level1 lfo6;tab-stops:list 36.0pt">Read S&amp;G, Section 6.4 </li>
+</ul>
+
+
+
+<p><b><i>Swap </i></b> </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">another type of hardware assistance for
+     process synchronization </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">a special hardware
+     instruction that does a complete swap (ordinarily three operations)
+     <b>atomically</b> </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">i.e., the complete swap is
+     executed or no part of it is </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">given pass-by-reference parameters A and B, it swaps their values </li>
+</ul>
+
+<p><b><i>Swap Solution to the Critical Section Problem</i></b> </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">
+	uses two variables called <tt>lock</tt> and <tt>key</tt>
+     </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">
+	intuition: if <tt>lock</tt> is false, then a process can enter the critical section, and otherwise it can't
+     </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l8 level1 lfo5;tab-stops:list 36.0pt">
+     initially, <tt>lock</tt> is false
+     </li>
+</ul>
+<br>
+<span style="margin-left:36.0pt;font-size:13.5pt;font-family:&quot;Courier New&quot;">
+<tt><b>repeat</b></tt><br></span>
+<p style="margin-left:72.0pt;font-size:13.5pt;font-family:&quot;Courier New&quot;">
+<tt>var = true</tt><br>
+<tt>while (var == true) swap(lock, var);</tt><br>
+critical section<br>
+<tt>lock = false;</tt><br>
+remainder section<br>
+</p>
+<p style="margin-left:36.0pt;font-size:13.5pt;font-family:&quot;Courier New&quot;">
+<tt><b>until</b> false <o:p></o:p></tt></p>
+
+
+
+<p>Semaphores </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l10 level1 lfo7;tab-stops:list 36.0pt">originally, semaphores
+     were flags for signalling between ships </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l10 level1 lfo7;tab-stops:list 36.0pt">a variable used for
+     signalling between processes </li>
+</ul>
+
+<p style="margin-left:36.0pt;text-indent:-18.0pt;mso-list:l10 level1 lfo7;
+tab-stops:list 36.0pt"><!--[if !supportLists]--><span style="font-size:13.5pt;
+mso-bidi-font-size:13.5pt;font-family:Symbol">·<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]-->operations possible on a semaphore: </p>
+
+<p style="margin-left:72.0pt;text-indent:-18.0pt;mso-list:l10 level2 lfo7;
+tab-stops:list 72.0pt"><!--[if !supportLists]--><span style="font-size:13.5pt;
+mso-bidi-font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-bidi-font-family:&quot;Times New Roman&quot;">o<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]-->initialization </p>
+
+<ul type="disc">
+ <ul type="circle">
+  <ul type="square">
+   <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+       auto;mso-list:l10 level3 lfo7;tab-stops:list 108.0pt">done before
+       individual processes try to operate on the semaphore </li>
+  </ul>
+ </ul>
+</ul>
+
+<p style="margin-left:72.0pt;text-indent:-18.0pt;mso-list:l10 level2 lfo7;
+tab-stops:list 72.0pt"><!--[if !supportLists]--><span style="font-size:13.5pt;
+mso-bidi-font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-bidi-font-family:&quot;Times New Roman&quot;">o<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]-->two main operations: </p>
+
+<ul type="disc">
+ <ul type="circle">
+  <ul type="square">
+   <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+       auto;mso-list:l10 level3 lfo7;tab-stops:list 108.0pt"><b>wait</b> (or <b>acquire</b>)
+       </li>
+   <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+       auto;mso-list:l10 level3 lfo7;tab-stops:list 108.0pt"><b>signal</b> (or <b>release</b>)
+       </li>
+  </ul>
+ </ul>
+</ul>
+
+<p style="margin-left:72.0pt;text-indent:-18.0pt;mso-list:l10 level2 lfo7;
+tab-stops:list 72.0pt"><!--[if !supportLists]--><span style="font-size:13.5pt;
+mso-bidi-font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-bidi-font-family:&quot;Times New Roman&quot;">o<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]-->the <b>wait</b> and <b>signal</b> operations are atomic
+operations (e.g., the test-and-set at the top of the loop of <b>wait</b> is done before losing the processor) </p>
+
+<p style="margin-left:72.0pt;text-indent:-18.0pt;mso-list:l10 level2 lfo7;
+tab-stops:list 72.0pt"><!--[if !supportLists]--><span style="font-size:13.5pt;
+mso-bidi-font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-bidi-font-family:&quot;Times New Roman&quot;">o<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><!--[endif]-->e.g., a resource such as a shared data structure is
+protected by a semaphore. You must <b>acquire</b> the semaphore before using the
+resource and <b>release</b> the semaphore when you are done with the shared resource. </p>
+
+<p style="font-size:13.5pt;font-family:&quot;Courier New&quot;">
+<tt>wait(S):</tt>
+</p>
+	<p style="margin-left:36.0pt;font-size:13.5pt;font-family:&quot;Courier New&quot;">
+	<tt><b>while</b> S </tt>
+		<img border="0" width="12" height="25" id="_x0000_i1033" src="./Solutions to the Critical Section Problem_files/img12.gif" align="MIDDLE"><tt>
+		0 <b><tt>do</tt></b>
+		</tt></p><tt>
+		<p style="margin-left:72.0pt">
+		<tt>no-op; </tt></p>
+	<p style="margin-left:36.0pt">
+	<tt>S.value := S.value - 1;</tt>
+	</p><br>
+<p></p>
+
+<p><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:
+&quot;Courier New&quot;">signal(S): <br>
+	</span></p><p style="margin-left:36.0pt">
+	<tt>S := S + 1; </tt>
+	</p>
+<br>
+
+<p>In either case, the initial value for S: </p>
+
+<ol start="1" type="1">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l1 level1 lfo8;tab-stops:list 36.0pt">equals 1 if only one
+     process is allowed in the critical section (binary semaphore) </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l1 level1 lfo8;tab-stops:list 36.0pt">equals <i>n</i> if at most <i>n</i>
+     processes are allowed in the critical section </li>
+</ol>
+
+<p><b><i>Semaphore Solution to the Critical Selection Problem</i></b> <br>
+<tt><b><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">repeat</span></b></tt><tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;"> </span></tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<img border="0" width="117" height="30" id="_x0000_i1034" src="./Solutions to the Critical Section Problem_files/img13.gif" align="BOTTOM"><br>
+<tt>critical section </tt><br>
+<img border="0" width="129" height="30" id="_x0000_i1035" src="./Solutions to the Critical Section Problem_files/img14.gif" align="BOTTOM"><br>
+<tt>remainder section </tt><br>
+<tt><b>until</b> false; </tt></span></p>
+
+<p><img border="0" width="250" height="141" id="_x0000_i1036" src="./Solutions to the Critical Section Problem_files/img15.gif" align="BOTTOM"></p>
+<br>
+
+<b><i>Alternative Implementation of Wait and Signal</i></b> <br>
+<br>
+
+<tt>wait(S)</tt>: <i>this code is executed atomically</i> <br>
+	<p style="margin-left:36.0pt">
+	<tt>S.value := S.value - 1;<br>
+	<tt><b>if</b> S.value &lt; 0</tt><br>
+	<tt><b>then begin</b> </tt><br>
+	</tt></p><tt>
+
+		<p style="margin-left:72.0pt">
+		<tt>add this process to S.L; </tt><br>
+		<tt>suspend this process; </tt><br>
+		</p>
+
+	<p style="margin-left:36.0pt">
+	<tt><b>end</b>; </tt>
+	</p><br>
+
+<img border="0" width="7" height="9" id="_x0000_i1037" src="./Solutions to the Critical Section Problem_files/img16.gif" align="BOTTOM">
+actual waiting is done by the suspended process <tt>
+<br>
+<br>
+
+<tt>signal(S):</tt>
+	<p style="margin-left:36.0pt">
+	<tt>S.value := S.value + 1; </tt><br>
+	<tt><b>if</b> S.value </tt>
+		<img border="0" width="12" height="25" id="_x0000_i1038" src="./Solutions to the Critical Section Problem_files/img17.gif" align="MIDDLE"><tt>
+		0 </tt><br>
+	<tt><b>then begin</b> </tt><br>
+	</p>
+
+		<p style="margin-left:72.0pt">
+		<tt>remove a process P from S.L; </tt><br>
+		<tt>wakeup(P); </tt><br>
+		</p><p>
+
+	</p><p style="margin-left:36.0pt">
+	<tt><b>end;</b></tt><br>
+	</p><p>
+
+</p><p><img border="0" width="435" height="233" id="_x0000_i1039" src="./Solutions to the Critical Section Problem_files/img18.gif" align="BOTTOM"></p>
+
+<p><b>mutex</b>: a binary semaphore used to enforce 
+mutual exclusion (i.e., solve the critical section problem)
+</p>
+
+<p><b><i>Implementing Semaphores</i></b> <br>
+To ensure the atomic property, the OS implementation must either:
+</p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo9;tab-stops:list 36.0pt">turn off interrupts </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l0 level1 lfo9;tab-stops:list 36.0pt"><b>use busy waiting</b>: to
+     make sure only one process does a wait operation at once </li>
+ <ul type="circle">
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l0 level2 lfo9;tab-stops:list 72.0pt">Peterson's Algorithm </li>
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l0 level2 lfo9;tab-stops:list 72.0pt">Test-and-Set </li>
+  <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+      auto;mso-list:l0 level2 lfo9;tab-stops:list 72.0pt">Swap</li>
+ </ul>
+</ul>
+
+<p><b><i>Bounded Buffer Problem</i></b> (Producer/Consumer Problem) <br>
+<img border="0" width="7" height="9" id="_x0000_i1040" src="./Solutions to the Critical Section Problem_files/img19.gif" align="BOTTOM">for
+example, in UNIX a pipe between two processes is implemented as a 4Kb buffer
+between the two processes </p>
+
+<p><img border="0" width="284" height="85" id="_x0000_i1041" src="./Solutions to the Critical Section Problem_files/img20.gif" align="BOTTOM"></p>
+
+<p>Producer </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l5 level1 lfo10;tab-stops:list 36.0pt">creates data and adds to
+     the buffer </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l5 level1 lfo10;tab-stops:list 36.0pt">do not want to overflow
+     the buffer </li>
+</ul>
+
+<p>Consumer </p>
+
+<ul type="disc">
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l2 level1 lfo11;tab-stops:list 36.0pt">removes data from buffer
+     (consumes it) </li>
+ <li class="MsoNormal" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+     mso-list:l2 level1 lfo11;tab-stops:list 36.0pt">does not want to get ahead
+     of producer </li>
+</ul>
+
+<p><b>Information common to both processes: <br>
+empty := n <br>
+full := 0 <br>
+mutex := 1 <br>
+
+<i>Producer Process</i></b> <br>
+<tt><b><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">repeat</span></b></tt><tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;"> <o:p></o:p></span></tt></p>
+
+<p style="margin-left:36.0pt">
+<tt><span style="font-size:13.5pt;font-family:
+&quot;Courier New&quot;">produce an item in nextp </span></tt><span style="font-size:
+13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<br>
+<tt>wait(empty); </tt><br>
+<tt>wait(mutex); </tt><br>
+<br>
+<tt>add nextp to buffer </tt><br>
+<br>
+<tt>signal(mutex); </tt><br>
+<tt>signal(full); <o:p></o:p></tt></span></p>
+
+<p><tt><b><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">until</span></b></tt><tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;"> false; </span></tt></p>
+
+<p><b><i>Consumer Process</i></b> <br>
+<tt><b><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">repeat</span></b></tt>
+<tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;"> 
+<o:p></o:p></span></tt></p>
+
+<p style="margin-left:36.0pt">
+<tt> wait(full); </tt> <br>
+<tt> wait(mutex); </tt>
+<span style="font-size:13.5pt; font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<br>
+<tt>remove an item from buffer to nextc </tt><br>
+<br>
+<tt>signal(mutex); </tt><br>
+<tt>signal(empty); </tt><br>
+<br>
+<tt>consume the item in nextc</tt><o:p></o:p></span></p>
+
+<p><tt><b><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">until</span></b></tt><tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;"> false; </span></tt></p>
+
+<p><b>mutex</b>: (semaphore) initialized to 1 <br>
+<b>empty</b>: count of empty locations in the buffer <br>
+<img border="0" width="7" height="9" id="_x0000_i1042" src="./Solutions to the Critical Section Problem_files/img21.gif" align="BOTTOM">initialized
+to n, the buffer size <br>
+<b>full</b>: count of full locations in the buffer <br>
+<img border="0" width="7" height="9" id="_x0000_i1043" src="./Solutions to the Critical Section Problem_files/img22.gif" align="BOTTOM">initialized
+to 0 </p>
+
+<p><img border="0" width="673" height="464" id="_x0000_i1044" src="./Solutions to the Critical Section Problem_files/img23.gif" align="BOTTOM"></p>
+
+<p>The empty and full semaphores are used for process synchronization. The
+mutex semaphore is used to ensure mutually exclusive access to the buffer. <br>
+if we were to change the code in the consumer process from: <br>
+<tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">wait(full) </span></tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<tt>wait(mutex)</tt></span><br>
+to <br>
+<tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;">wait(mutex) </span></tt><span style="font-size:13.5pt;font-family:&quot;Courier New&quot;;mso-fareast-font-family:&quot;Courier New&quot;"><br>
+<tt>wait(full)</tt></span>, <br>
+then we could reach a deadlock where Process 1 is waiting for Process 2 <b>and</b>
+Process 2 is waiting for Process 1. <br>
+<br>
+<a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node2.html"></a><!--[if gte vml 1]><v:shape id="_x0000_s1028" type="#_x0000_t75"
+ alt="" href="node2.html" style='position:absolute;margin-left:0;margin-top:0;
+ width:30pt;height:30pt;z-index:3;mso-wrap-distance-left:0;
+ mso-wrap-distance-top:0;mso-wrap-distance-right:0;mso-wrap-distance-bottom:0;
+ mso-position-horizontal:left;mso-position-horizontal-relative:text;
+ mso-position-vertical-relative:line' o:allowoverlap="f" o:button="t">
+ <v:imagedata src="http://www.cs.uregina.ca/~hamilton/courses/330/notes/gifs/back_arrow.gif"/>
+ <w:wrap type="square"/>
+</v:shape><![endif]--><!--[if !vml]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node2.html"><img border="0" width="40" height="40" src="./Solutions to the Critical Section Problem_files/back_arrow.gif" align="left" v:shapes="_x0000_s1028"></a><!--[endif]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node2.html"></a><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node4.html"></a><!--[if gte vml 1]><v:shape id="_x0000_s1029" type="#_x0000_t75"
+ alt="" href="node4.html" style='position:absolute;margin-left:-10pt;
+ margin-top:0;width:30pt;height:30pt;z-index:4;mso-wrap-distance-left:0;
+ mso-wrap-distance-top:0;mso-wrap-distance-right:0;mso-wrap-distance-bottom:0;
+ mso-position-horizontal:right;mso-position-horizontal-relative:text;
+ mso-position-vertical-relative:line' o:allowoverlap="f" o:button="t">
+ <v:imagedata src="http://www.cs.uregina.ca/~hamilton/courses/330/notes/gifs/next.gif"/>
+ <w:wrap type="square"/>
+</v:shape><![endif]--><!--[if !vml]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node4.html"><img border="0" width="40" height="40" src="./Solutions to the Critical Section Problem_files/next.gif" align="right" v:shapes="_x0000_s1029"></a><!--[endif]--><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/synchro/node4.html"></a></p>
+
+<p class="MsoNormal" align="center" style="mso-margin-top-alt:auto;mso-margin-bottom-alt:
+auto;text-align:center"><a href="http://www2.cs.uregina.ca/~hamilton/courses/330/notes/index.html"><span style="text-decoration:
+none;text-underline:none"><img border="0" width="59" height="42" id="_x0000_i1045" src="./Solutions to the Critical Section Problem_files/home.gif"></span>Return
+to Contents </a></p>
+
+</tt></tt></tt></div><tt><tt>
+
+
+
+
+</tt></tt></body></html>
